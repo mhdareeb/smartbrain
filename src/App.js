@@ -85,11 +85,9 @@ class App extends Component {
             </div>
             :
             <div className='ontop'>
-              <div className='flex items-start justify-end pa3 bg-bluei'>
-                <Navigation text='Sign Out' onRouteChange={this.onRouteChange} newroute='signin'/>
-              </div>
-              <div className='flex items-start justify-start ml3'>
+              <div className='flex items-start justify-between pa3 bg-bluei'>
                 <Logo id='logo'/>
+                <Navigation text='Sign Out' onRouteChange={this.onRouteChange} newroute='signin'/>
               </div>
               <div className=''>
                 <Rank />
