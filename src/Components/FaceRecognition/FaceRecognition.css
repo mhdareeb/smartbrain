@@ -1,0 +1,40 @@
+#face
+{
+    width: auto;
+    height: auto;
+    max-width: 550px;
+    max-height: 550px;
+}
+
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+  
+td, th {
+    border: 1px solid black;
+    text-align: center;
+    padding: 8px;
+}
+
+@media screen and (max-width:470px)
+{
+    #face
+    {
+        object-position: 50% 10%;
+        object-fit: contain;
+        width: 80vw;
+    }
+    td, th {
+        padding: 4px;
+    }
+}
+
+@media screen and (max-width:312px)
+{
+    td, th {
+        padding: 1px;
+        font-size: 0.9em;
+    }
+}

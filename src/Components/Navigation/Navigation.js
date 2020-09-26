@@ -1,9 +1,9 @@
 import React from  'react';
 
-const Navigation = () => {
+const Navigation = ({text, onRouteChange, newroute}) => {
     return (
-        <div className='flex bg-red'>
-            <p className='f3 bg-green pointer color-black ma2 pa1 link dim black underline-hover'>Sign In</p>
+        <div className='bg-redi'>
+            <p onClick={()=>onRouteChange(newroute)} className='f4 bg-greeni pointer color-black ma0 pa1 link dim black underline-hover'>{text}</p>
         </div>
     )
 }
