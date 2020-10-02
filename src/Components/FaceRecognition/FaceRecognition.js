@@ -11,10 +11,10 @@ const FaceRecognition = ({url, boxes, display}) => {
     }
     else
     {
-        const bounding_boxes = boxes.map(box=> <BoundingBox box={box} display={display} />)
+        const bounding_boxes = boxes.map(box=> <BoundingBox key={box.id} box={box} display={display} />)
         const detections = boxes.map(box=>{
            return (
-                <tr>
+                <tr key={box.id}>
                     <td>{round(box.id)}</td>
                     <td>{round(box.top)}</td>
                     <td>{round(box.right)}</td>
@@ -31,14 +31,18 @@ const FaceRecognition = ({url, boxes, display}) => {
                 </div>
                 <div className='f4 tl mt2' style={{display:display}}>
                     <table>
-                        <tr>
-                            <th>ID</th>
-                            <th>Top</th>
-                            <th>Right</th>
-                            <th>Bottom</th>
-                            <th>Left</th>
-                        </tr>
-                        {detections}
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Top</th>
+                                <th>Right</th>
+                                <th>Bottom</th>
+                                <th>Left</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {detections}
+                        </tbody>
                     </table>
                 </div>
             </div>

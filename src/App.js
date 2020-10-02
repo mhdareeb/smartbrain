@@ -20,12 +20,24 @@ class App extends Component {
   constructor()
   {
     super();
+    this.emptyUser = {id:'', name:'', email:'', entries:'', joined:''};
     this.state={
       route : 'signin',
       url: '',
       boxes:[],
-      display:'none'
-    }
+      display:'none',
+      user : {
+        id : '',
+        name : '',
+        email : '',
+        entries : '',
+        joined : ''
+      }
+    };
+  }
+
+  setUserData = (user) => {
+    Object.assign(this.state.user, user);
   }
 
   calculateFaceBox = (normalized) => {
@@ -40,27 +52,42 @@ class App extends Component {
   }
 
   onSearchChange = (event) => {
-    this.setState({url:event.target.value, box:{}, display:'none'});
+    this.setState({url:event.target.value, boxes:[], display:'none'});
   }
 
   onDetect = () => {
-    console.log('hello');
     app.models.predict(Clarifai.FACE_DETECT_MODEL, this.state.url)
     .then(response => {
       const normalized_boxes = response.outputs[0].data.regions.map(face=>face.region_info.bounding_box).splice(0,5);
       const bounding_boxes = normalized_boxes.map(box=>this.calculateFaceBox(box));
       bounding_boxes.forEach((box,i)=>box.id=i+1);
       this.setState({boxes:bounding_boxes, display:'block'});
-      console.log(this.state.boxes, this.state.display);
+      // console.log(this.state.boxes, this.state.display);
     })
-    console.log('bye');
+    fetch('http://192.168.0.106:3000/image',{
+        method : 'PUT',
+        headers : {'Content-Type' : 'application/json'},
+        body : JSON.stringify({
+            id:this.state.user.id
+        })
+    })
+    .then(res=>res.json())
+    .then(entries=>Object.assign(this.state.user, {entries:entries}))
+    .catch(console.log);
   }
 
-  onRouteChange = (route) => this.setState({route:route})
+  onRouteChange = (route) => {
+    this.setState({route:route})
+    if(route!=='home')
+    {
+      Object.assign(this.state.user, this.emptyUser);
+      this.setState({url:'',boxes:[], display:'none'});
+    }
+  }
 
   render(){
-    let {route, url, boxes, display}= this.state;
-    console.log(route);
+    let {route, url, boxes, display, user}= this.state;
+    console.log(this.state);
     return (
       <div className="App flex flex-column">
         <Particles params={params} className='particles'/>
@@ -71,7 +98,7 @@ class App extends Component {
             <div className='flex items-start justify-end pa3'>
               <Navigation text='Register' onRouteChange={this.onRouteChange} newroute='register'/>
             </div>
-            <SignIn onRouteChange={this.onRouteChange}/>
+            <SignIn onRouteChange={this.onRouteChange} setUserData={this.setUserData}/>
           </div>
           :
           (
@@ -90,7 +117,7 @@ class App extends Component {
                 <Navigation text='Sign Out' onRouteChange={this.onRouteChange} newroute='signin'/>
               </div>
               <div className=''>
-                <Rank />
+                <Rank name={user.name} entries={user.entries}/>
                 <ImageLinkForm onSearchChange={this.onSearchChange} onDetect={this.onDetect} />
                 <FaceRecognition url={url} boxes={boxes} display={display}/>
               </div>
