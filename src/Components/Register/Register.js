@@ -33,13 +33,13 @@ class Register extends React.Component {
             })
             .then(res=>res.json())
             .then(data=>{
-                console.log(data)
+                console.log(data);
                 if(data==='exists')
-                    alert("user already exists");
+                    console.log("user already exists");
                 else
                    onRouteChange('signin');
             })
-            .catch(console.log);
+            .catch(err=>console.log("error=",err));
         }
     }
 

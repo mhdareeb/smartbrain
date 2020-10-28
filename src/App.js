@@ -61,18 +61,26 @@ class App extends Component {
       const normalized_boxes = response.outputs[0].data.regions.map(face=>face.region_info.bounding_box).splice(0,5);
       const bounding_boxes = normalized_boxes.map(box=>this.calculateFaceBox(box));
       bounding_boxes.forEach((box,i)=>box.id=i+1);
-      this.setState({boxes:bounding_boxes, display:'block'});
-      // console.log(this.state.boxes, this.state.display);
-    })
-    fetch('http://192.168.0.106:3000/image',{
+      const nboxes = bounding_boxes.length;
+      // this.setState({boxes:bounding_boxes, display:'block'});
+      fetch('http://192.168.0.106:3000/image',{
         method : 'PUT',
         headers : {'Content-Type' : 'application/json'},
         body : JSON.stringify({
-            id:this.state.user.id
+            id:this.state.user.id,
+            nboxes : nboxes
         })
     })
     .then(res=>res.json())
-    .then(entries=>Object.assign(this.state.user, {entries:entries}))
+    .then(user=>{
+      this.setState({
+        user:user,
+        boxes:bounding_boxes,
+        display:'block'
+      })
+    })
+    .catch(console.log);
+    })
     .catch(console.log);
   }
 
@@ -86,7 +94,7 @@ class App extends Component {
   }
 
   render(){
-    let {route, url, boxes, display, user}= this.state;
+    let {route, url, boxes, display, user} = this.state;
     console.log(this.state);
     return (
       <div className="App flex flex-column">
