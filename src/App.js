@@ -10,12 +10,6 @@ import Register from './Components/Register/Register';
 import Particles from 'react-particles-js';
 import params from './ParticlesParams';
 
-import Clarifai from 'clarifai';
-
-const app = new Clarifai.App({
- apiKey: 'abc9a218c21a479894812cabb1bc3752'
-});
-
 class App extends Component {
   constructor()
   {
@@ -56,30 +50,41 @@ class App extends Component {
   }
 
   onDetect = () => {
-    app.models.predict(Clarifai.FACE_DETECT_MODEL, this.state.url)
-    .then(response => {
-      const normalized_boxes = response.outputs[0].data.regions.map(face=>face.region_info.bounding_box).splice(0,5);
-      const bounding_boxes = normalized_boxes.map(box=>this.calculateFaceBox(box));
-      bounding_boxes.forEach((box,i)=>box.id=i+1);
-      const nboxes = bounding_boxes.length;
-      // this.setState({boxes:bounding_boxes, display:'block'});
-      fetch('http://192.168.0.106:3000/image',{
-        method : 'PUT',
-        headers : {'Content-Type' : 'application/json'},
-        body : JSON.stringify({
-            id:this.state.user.id,
-            nboxes : nboxes
-        })
-    })
-    .then(res=>res.json())
-    .then(user=>{
-      this.setState({
-        user:user,
-        boxes:bounding_boxes,
-        display:'block'
+    fetch('http://192.168.0.106:3000/detect',{
+      method : 'POST',
+      headers : {'Content-Type' : 'application/json'},
+      body : JSON.stringify({
+          url : this.state.url
       })
     })
-    .catch(console.log);
+    .then(res=>res.json())
+    .then(response => {
+      if(response!=='failed')
+      {
+        const normalized_boxes = response.outputs[0].data.regions.map(face=>face.region_info.bounding_box).splice(0,5);
+        const bounding_boxes = normalized_boxes.map(box=>this.calculateFaceBox(box));
+        bounding_boxes.forEach((box,i)=>box.id=i+1);
+        const nboxes = bounding_boxes.length;
+        fetch('http://192.168.0.106:3000/image',{
+          method : 'PUT',
+          headers : {'Content-Type' : 'application/json'},
+          body : JSON.stringify({
+              id:this.state.user.id,
+              nboxes : nboxes
+          })
+        })
+        .then(res=>res.json())
+        .then(user=>{
+          this.setState({
+            user:user,
+            boxes:bounding_boxes,
+            display:'block'
+          })
+        })
+        .catch(console.log);
+      }
+      else
+        alert('Detection failed, check URL');
     })
     .catch(console.log);
   }
@@ -120,7 +125,7 @@ class App extends Component {
             </div>
             :
             <div className='ontop'>
-              <div className='flex items-start justify-between pa3 bg-bluei'>
+              <div className='flex items-start justify-between pa3'>
                 <Logo id='logo'/>
                 <Navigation text='Sign Out' onRouteChange={this.onRouteChange} newroute='signin'/>
               </div>

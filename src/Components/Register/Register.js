@@ -19,33 +19,42 @@ class Register extends React.Component {
 
     onRegistrationAttempt = (route) => {
         const {onRouteChange} = this.props;
+        const {name, email, password} = this.state;
         if(route==='signin')
             onRouteChange(route);
         else{
-            fetch('http://192.168.0.106:3000/register',{
-                method : 'POST',
-                headers : {'Content-Type' : 'application/json'},
-                body : JSON.stringify({
-                    name : this.state.name,
-                    email : this.state.email,
-                    password : this.state.password
+            if(!(name.length>0 && email.includes('@') && email.includes('.com') && password.length>=3))
+            alert(`Name cannot be empty, Email must have '@' and '.com', Mimimum Password length is 3`);
+            else
+            {
+                fetch('http://192.168.0.106:3000/register',{
+                    method : 'POST',
+                    headers : {'Content-Type' : 'application/json'},
+                    body : JSON.stringify({
+                        name : name,
+                        email : email,
+                        password : password
+                    })
                 })
-            })
-            .then(res=>res.json())
-            .then(data=>{
-                console.log(data);
-                if(data==='exists')
-                    console.log("user already exists");
-                else
-                   onRouteChange('signin');
-            })
-            .catch(err=>console.log("error=",err));
+                .then(res=>res.json())
+                .then(data=>{
+                    if(data==='exists')
+                        alert("User already registered");
+                    else if(data==='invalid')
+                        alert("One or more values missing/incorrect");
+                    else if(data==='failed')
+                        alert('Failed to register user!');
+                        else
+                        onRouteChange('signin');
+                })
+                .catch(err=>console.log("error=",err));
+            }
         }
     }
 
     render(){
         return (
-            <main className="ontop pv5 black-80 bg-redi" id="register">
+            <main className="ontop pv5 black-80" id="register">
                 <form className="ba bw1 pa4 shadow-5 measure center">
                     <fieldset id="sign_up" className="ba b--transparent ph0 mh0">
                         <legend className="f2 fw6 ph0 mh0">Register</legend>
@@ -63,7 +72,7 @@ class Register extends React.Component {
                         </div>
                     </fieldset>
                     <div className="">
-                        <input onClick={()=>this.onRegistrationAttempt('register')} className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f5 dib" type="submit" value="Register" />
+                        <input onClick={()=>this.onRegistrationAttempt('register')} className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f5 dib" type="button" value="Register" />
                     </div>
                     <div className="lh-copy mt3">
                         <p onClick={()=>this.onRegistrationAttempt('signin')} className="f6 link dim black db pointer">Already Registered? Sign In</p>

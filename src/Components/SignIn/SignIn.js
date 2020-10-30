@@ -17,35 +17,42 @@ class SignIn extends React.Component  {
 
     onSigninAttempt = (route) => {
         const {onRouteChange, setUserData} = this.props;
+        const {email, password} = this.state;
         if(route==='register')
             onRouteChange(route);
         else{
-            fetch('http://192.168.0.106:3000/signin',{
-                method : 'POST',
-                headers : {'Content-Type' : 'application/json'},
-                body : JSON.stringify({
-                    email : this.state.email,
-                    password : this.state.password
+            if(!(email.includes('@') && email.includes('.com') && password.length>=2))
+                alert(`Email must have '@' and '.com', Mimimum Password length is 3`);
+            else
+            {
+                fetch('http://192.168.0.106:3000/signin',{
+                    method : 'POST',
+                    headers : {'Content-Type' : 'application/json'},
+                    body : JSON.stringify({
+                        email : email,
+                        password : password
+                    })
                 })
-            })
-            .then(res=>res.json())
-            .then(data=>{
-                if(data==='failed')
-                    console.log(data)
-                else
-                {
-                    // console.log(data);
-                    setUserData(data);
-                    onRouteChange(route);
-                }
-            })
-            .catch(console.log);
+                .then(res=>res.json())
+                .then(data=>{
+                    if(data==='failed')
+                        alert('User not registered');
+                    else if(data==='invalid')
+                        alert("One or more values missing/incorrect");
+                    else
+                    {
+                        setUserData(data);
+                        onRouteChange(route);
+                    }
+                })
+                .catch(console.log);
+            }
         }
     }
 
     render(){
         return (
-            <main className="ontop pv5 black-80 bg-redi" id='signin' >
+            <main className="ontop pv5 black-80" id='signin' >
                 <form className="ba bw1 pa4 shadow-5 measure center">
                     <fieldset id="sign_up" className="ba b--transparent ph0 mh0">
                         <legend className="f2 fw6 ph0 mh0">Sign In</legend>
