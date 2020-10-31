@@ -9,13 +9,14 @@ class Register extends React.Component {
         this.state={
             name:'',
             email : '',
-            password : ''
+            password : '',
+            displayError : 'none'
         }
     }
 
-    onNameChange = (event) => this.setState({name:event.target.value})
-    onEmailChange = (event) => this.setState({email:event.target.value})
-    onPasswordChange = (event) => this.setState({password:event.target.value})
+    onNameChange = (event) => this.setState({name:event.target.value, displayError:'none'})
+    onEmailChange = (event) => this.setState({email:event.target.value, displayError:'none'})
+    onPasswordChange = (event) => this.setState({password:event.target.value, displayError:'none'})
 
     onRegistrationAttempt = (route) => {
         const {onRouteChange, showError} = this.props;
@@ -25,7 +26,10 @@ class Register extends React.Component {
             onRouteChange(route);
         else{
             if(!(name.length>0 && email.includes('@') && email.includes('.com') && password.length>=3))
+            {
+                this.setState({displayError:'block'});
                 showError(errorNode, `Name cannot be empty, Email must have '@' and '.com', Mimimum Password length is 3`);
+            }
             else
             {
                 fetch('https://agile-earth-63734.herokuapp.com/register',{
@@ -40,11 +44,20 @@ class Register extends React.Component {
                 .then(res=>res.json())
                 .then(data=>{
                     if(data==='exists')
+                    {
+                        this.setState({displayError:'block'});
                         showError(errorNode, "User already registered");
+                    }
                     else if(data==='invalid')
+                    {
+                        this.setState({displayError:'block'});
                         showError(errorNode, "One or more values missing/incorrect");
+                    }
                     else if(data==='failed')
+                    {
+                        this.setState({displayError:'block'});
                         showError(errorNode, 'Failed to register user!');
+                    }
                     else
                         onRouteChange('signin');
                 })
@@ -78,7 +91,7 @@ class Register extends React.Component {
                     <div className="lh-copy mt3">
                         <p onClick={()=>this.onRegistrationAttempt('signin')} className="f6 link dim black db pointer">Already Registered? Sign In</p>
                     </div>
-                    <div id="error"></div>
+                    <div id="error" style={{display:this.state.displayError}}></div>
                 </form>
             </main>
         );

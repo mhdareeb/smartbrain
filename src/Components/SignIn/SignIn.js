@@ -8,12 +8,13 @@ class SignIn extends React.Component  {
         super();
         this.state={
             email : '',
-            password : ''
+            password : '',
+            displayError : 'none'
         }
     }
 
-    onEmailChange = (event) => this.setState({email:event.target.value})
-    onPasswordChange = (event) => this.setState({password:event.target.value})
+    onEmailChange = (event) => this.setState({email:event.target.value, displayError:'none'})
+    onPasswordChange = (event) => this.setState({password:event.target.value, displayError:'none'})
 
     onSigninAttempt = (route) => {
         const {onRouteChange, setUserData, showError} = this.props;
@@ -23,7 +24,10 @@ class SignIn extends React.Component  {
             onRouteChange(route);
         else{
             if(!(email.includes('@') && email.includes('.com') && password.length>=2))
+            {
+                this.setState({displayError:'block'});
                 showError(errorNode, `Email must have '@' and '.com', Mimimum Password length is 3`);
+            }
             else
             {
                 fetch('https://agile-earth-63734.herokuapp.com/signin',{
@@ -37,9 +41,15 @@ class SignIn extends React.Component  {
                 .then(res=>res.json())
                 .then(data=>{
                     if(data==='failed')
+                    {
+                        this.setState({displayError:'block'})
                         showError(errorNode, 'Wrong username/password');
+                    }
                     else if(data==='invalid')
+                    {
+                        this.setState({displayError:'block'})
                         showError(errorNode, "One or more values missing/incorrect");
+                    }
                     else
                     {
                         setUserData(data);
@@ -72,7 +82,7 @@ class SignIn extends React.Component  {
                     <div className="lh-copy mt3">
                         <p onClick={()=>this.onSigninAttempt('register')} className="f6 link pointer dim black db">Not a user? Register</p>
                     </div>
-                    <div id="error"></div>
+                    <div id="error" style={{display:this.state.displayError}} ></div>
                 </form>
             </main>
         )

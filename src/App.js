@@ -20,6 +20,7 @@ class App extends Component {
       url: '',
       boxes:[],
       display:'none',
+      displayError : 'none',
       user : {
         id : '',
         name : '',
@@ -46,10 +47,11 @@ class App extends Component {
   }
 
   onSearchChange = (event) => {
-    this.setState({url:event.target.value, boxes:[], display:'none'});
+    this.setState({url:event.target.value, boxes:[], display:'none', displayError:'none'});
   }
 
   onDetect = () => {
+    let errorNode = document.getElementById('error');
     fetch('https://agile-earth-63734.herokuapp.com/detect',{
       method : 'POST',
       headers : {'Content-Type' : 'application/json'},
@@ -61,6 +63,7 @@ class App extends Component {
     .then(response => {
       if(response!=='failed')
       {
+        this.showError(errorNode,"");
         const normalized_boxes = response.outputs[0].data.regions.map(face=>face.region_info.bounding_box).splice(0,5);
         const bounding_boxes = normalized_boxes.map(box=>this.calculateFaceBox(box));
         bounding_boxes.forEach((box,i)=>box.id=i+1);
@@ -84,7 +87,10 @@ class App extends Component {
         .catch(console.log);
       }
       else
-        alert('Detection failed, check URL');
+      {
+        this.setState({displayError :'block'});
+        this.showError(errorNode, 'Detection failed, check URL');
+      }
     })
     .catch(console.log);
   }
@@ -136,6 +142,7 @@ class App extends Component {
               <div className=''>
                 <Rank name={user.name} entries={user.entries}/>
                 <ImageLinkForm onSearchChange={this.onSearchChange} onDetect={this.onDetect} />
+                <div id='error' style={{display:this.state.displayError}} ></div>
                 <FaceRecognition url={url} boxes={boxes} display={display}/>
               </div>
             </div>

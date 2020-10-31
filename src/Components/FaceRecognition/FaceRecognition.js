@@ -27,7 +27,7 @@ const FaceRecognition = ({url, boxes, display}) => {
             <div id='parent' className='flex flex-column justify-center items-center'>
                 <div className='relative'>
                     <img id='face' src={url} alt='face'/>
-                    {bounding_boxes};                    
+                    {bounding_boxes}              
                 </div>
                 <div className='f4 tl mt2' style={{display:display}}>
                     <table>
