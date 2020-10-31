@@ -16,16 +16,17 @@ class SignIn extends React.Component  {
     onPasswordChange = (event) => this.setState({password:event.target.value})
 
     onSigninAttempt = (route) => {
-        const {onRouteChange, setUserData} = this.props;
+        const {onRouteChange, setUserData, showError} = this.props;
         const {email, password} = this.state;
+        let errorNode = document.getElementById('error');
         if(route==='register')
             onRouteChange(route);
         else{
             if(!(email.includes('@') && email.includes('.com') && password.length>=2))
-                alert(`Email must have '@' and '.com', Mimimum Password length is 3`);
+                showError(errorNode, `Email must have '@' and '.com', Mimimum Password length is 3`);
             else
             {
-                fetch('http://192.168.0.106:3000/signin',{
+                fetch('https://agile-earth-63734.herokuapp.com/signin',{
                     method : 'POST',
                     headers : {'Content-Type' : 'application/json'},
                     body : JSON.stringify({
@@ -36,9 +37,9 @@ class SignIn extends React.Component  {
                 .then(res=>res.json())
                 .then(data=>{
                     if(data==='failed')
-                        alert('User not registered');
+                        showError(errorNode, 'Wrong username/password');
                     else if(data==='invalid')
-                        alert("One or more values missing/incorrect");
+                        showError(errorNode, "One or more values missing/incorrect");
                     else
                     {
                         setUserData(data);
@@ -71,6 +72,7 @@ class SignIn extends React.Component  {
                     <div className="lh-copy mt3">
                         <p onClick={()=>this.onSigninAttempt('register')} className="f6 link pointer dim black db">Not a user? Register</p>
                     </div>
+                    <div id="error"></div>
                 </form>
             </main>
         )

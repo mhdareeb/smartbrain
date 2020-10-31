@@ -18,16 +18,17 @@ class Register extends React.Component {
     onPasswordChange = (event) => this.setState({password:event.target.value})
 
     onRegistrationAttempt = (route) => {
-        const {onRouteChange} = this.props;
+        const {onRouteChange, showError} = this.props;
         const {name, email, password} = this.state;
+        let errorNode = document.getElementById('error');
         if(route==='signin')
             onRouteChange(route);
         else{
             if(!(name.length>0 && email.includes('@') && email.includes('.com') && password.length>=3))
-            alert(`Name cannot be empty, Email must have '@' and '.com', Mimimum Password length is 3`);
+                showError(errorNode, `Name cannot be empty, Email must have '@' and '.com', Mimimum Password length is 3`);
             else
             {
-                fetch('http://192.168.0.106:3000/register',{
+                fetch('https://agile-earth-63734.herokuapp.com/register',{
                     method : 'POST',
                     headers : {'Content-Type' : 'application/json'},
                     body : JSON.stringify({
@@ -39,15 +40,15 @@ class Register extends React.Component {
                 .then(res=>res.json())
                 .then(data=>{
                     if(data==='exists')
-                        alert("User already registered");
+                        showError(errorNode, "User already registered");
                     else if(data==='invalid')
-                        alert("One or more values missing/incorrect");
+                        showError(errorNode, "One or more values missing/incorrect");
                     else if(data==='failed')
-                        alert('Failed to register user!');
-                        else
+                        showError(errorNode, 'Failed to register user!');
+                    else
                         onRouteChange('signin');
                 })
-                .catch(err=>console.log("error=",err));
+                .catch(console.log);
             }
         }
     }
@@ -77,6 +78,7 @@ class Register extends React.Component {
                     <div className="lh-copy mt3">
                         <p onClick={()=>this.onRegistrationAttempt('signin')} className="f6 link dim black db pointer">Already Registered? Sign In</p>
                     </div>
+                    <div id="error"></div>
                 </form>
             </main>
         );

@@ -50,7 +50,7 @@ class App extends Component {
   }
 
   onDetect = () => {
-    fetch('http://192.168.0.106:3000/detect',{
+    fetch('https://agile-earth-63734.herokuapp.com/detect',{
       method : 'POST',
       headers : {'Content-Type' : 'application/json'},
       body : JSON.stringify({
@@ -65,7 +65,7 @@ class App extends Component {
         const bounding_boxes = normalized_boxes.map(box=>this.calculateFaceBox(box));
         bounding_boxes.forEach((box,i)=>box.id=i+1);
         const nboxes = bounding_boxes.length;
-        fetch('http://192.168.0.106:3000/image',{
+        fetch('https://agile-earth-63734.herokuapp.com/image',{
           method : 'PUT',
           headers : {'Content-Type' : 'application/json'},
           body : JSON.stringify({
@@ -98,6 +98,11 @@ class App extends Component {
     }
   }
 
+  showError = (node, message) => {
+    node.innerHTML = message;
+    node.style.color = 'red';
+  }
+
   render(){
     let {route, url, boxes, display, user} = this.state;
     console.log(this.state);
@@ -111,7 +116,7 @@ class App extends Component {
             <div className='flex items-start justify-end pa3'>
               <Navigation text='Register' onRouteChange={this.onRouteChange} newroute='register'/>
             </div>
-            <SignIn onRouteChange={this.onRouteChange} setUserData={this.setUserData}/>
+            <SignIn showError={this.showError} onRouteChange={this.onRouteChange} setUserData={this.setUserData}/>
           </div>
           :
           (
@@ -121,7 +126,7 @@ class App extends Component {
               <div className='flex items-start justify-end pa3'>
                 <Navigation text='Sign In' onRouteChange={this.onRouteChange} newroute='signin'/>
               </div>
-              <Register onRouteChange={this.onRouteChange}/>
+              <Register showError={this.showError} onRouteChange={this.onRouteChange}/>
             </div>
             :
             <div className='ontop'>
