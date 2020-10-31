@@ -105,7 +105,6 @@ class App extends Component {
 
   render(){
     let {route, url, boxes, display, user} = this.state;
-    console.log(this.state);
     return (
       <div className="App flex flex-column">
         <Particles params={params} className='particles'/>
