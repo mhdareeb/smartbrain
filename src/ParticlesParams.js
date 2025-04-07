@@ -110,4 +110,4 @@ const params =
   "retina_detect": true
 }
 
-  export default params;
+export default params;

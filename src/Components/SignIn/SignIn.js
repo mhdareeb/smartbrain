@@ -1,5 +1,6 @@
 import React from  'react';
 import './SignIn.css';
+import config from '../../config';
 
 class SignIn extends React.Component  {
 
@@ -30,7 +31,7 @@ class SignIn extends React.Component  {
             }
             else
             {
-                fetch('https://agile-earth-63734.herokuapp.com/signin',{
+                fetch(config.base_url + '/signin', {
                     method : 'POST',
                     headers : {'Content-Type' : 'application/json'},
                     body : JSON.stringify({

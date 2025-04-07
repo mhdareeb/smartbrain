@@ -1,5 +1,6 @@
 import React from  'react';
 import './Register.css'
+import config from '../../config';
 
 class Register extends React.Component {
     
@@ -32,7 +33,7 @@ class Register extends React.Component {
             }
             else
             {
-                fetch('https://agile-earth-63734.herokuapp.com/register',{
+                fetch(config.base_url + '/register', {
                     method : 'POST',
                     headers : {'Content-Type' : 'application/json'},
                     body : JSON.stringify({
