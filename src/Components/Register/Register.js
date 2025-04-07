@@ -1,6 +1,5 @@
 import React from  'react';
 import './Register.css'
-import config from '../../config';
 
 class Register extends React.Component {
     
@@ -33,7 +32,7 @@ class Register extends React.Component {
             }
             else
             {
-                fetch(config.base_url + '/register', {
+                fetch(process.env.BACKEND_URL + '/register', {
                     method : 'POST',
                     headers : {'Content-Type' : 'application/json'},
                     body : JSON.stringify({

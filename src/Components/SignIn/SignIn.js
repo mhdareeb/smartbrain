@@ -1,6 +1,5 @@
 import React from  'react';
 import './SignIn.css';
-import config from '../../config';
 
 class SignIn extends React.Component  {
 
@@ -31,7 +30,7 @@ class SignIn extends React.Component  {
             }
             else
             {
-                fetch(config.base_url + '/signin', {
+                fetch(process.env.BACKEND_URL + '/signin', {
                     method : 'POST',
                     headers : {'Content-Type' : 'application/json'},
                     body : JSON.stringify({
