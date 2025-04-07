@@ -10,6 +10,8 @@ import Register from './Components/Register/Register';
 import Particles from 'react-particles-js';
 import params from './ParticlesParams';
 
+console.log('Backend URL: ' + process.env.REACT_APP_BASE_URL);
+
 class App extends Component {
   constructor()
   {
@@ -52,7 +54,7 @@ class App extends Component {
 
   onDetect = () => {
     let errorNode = document.getElementById('error');
-    fetch(process.env.BACKEND_URL + '/detect', {
+    fetch(process.env.REACT_APP_BASE_URL + '/detect', {
       method : 'POST',
       headers : {'Content-Type' : 'application/json'},
       body : JSON.stringify({
@@ -68,7 +70,7 @@ class App extends Component {
         const bounding_boxes = normalized_boxes.map(box=>this.calculateFaceBox(box));
         bounding_boxes.forEach((box,i)=>box.id=i+1);
         const nboxes = bounding_boxes.length;
-        fetch(process.env.BACKEND_URL + '/image', {
+        fetch(process.env.REACT_APP_BASE_URL + '/image', {
           method : 'PUT',
           headers : {'Content-Type' : 'application/json'},
           body : JSON.stringify({

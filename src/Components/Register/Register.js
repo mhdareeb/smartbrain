@@ -32,7 +32,7 @@ class Register extends React.Component {
             }
             else
             {
-                fetch(process.env.BACKEND_URL + '/register', {
+                fetch(process.env.REACT_APP_BASE_URL + '/register', {
                     method : 'POST',
                     headers : {'Content-Type' : 'application/json'},
                     body : JSON.stringify({

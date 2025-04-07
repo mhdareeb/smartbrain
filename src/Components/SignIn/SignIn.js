@@ -30,7 +30,7 @@ class SignIn extends React.Component  {
             }
             else
             {
-                fetch(process.env.BACKEND_URL + '/signin', {
+                fetch(process.env.REACT_APP_BASE_URL + '/signin', {
                     method : 'POST',
                     headers : {'Content-Type' : 'application/json'},
                     body : JSON.stringify({
