@@ -10,7 +10,7 @@ import Register from './Components/Register/Register';
 import Particles from 'react-particles-js';
 import params from './ParticlesParams';
 
-console.log('Backend URL: ' + process.env.REACT_APP_BASE_URL);
+console.log('REACT_APP_BASE_URL: ' + process.env.REACT_APP_BASE_URL);
 
 class App extends Component {
   constructor()
